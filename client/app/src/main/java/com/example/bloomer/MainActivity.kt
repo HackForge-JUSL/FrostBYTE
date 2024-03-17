@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -79,7 +80,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.JournalScreen.route){
-            JournalScreen(navController = navController,authViewModel = authViewModel)
+            JournalScreen(navController = navController, authViewModel = authViewModel)
         }
 
         composable(Screen.ChatBotScreen.route) {
@@ -95,15 +96,20 @@ fun NavigationGraph(
         }
 
         composable(Screen.DoctorScreen.route) {
-
+            DoctorScreen(navController = navController){
+                navController.navigate("${Screen.AppointmentScreen.route}/${it.name}")
+            }
         }
 
         composable("${Screen.AppointmentScreen.route}/{doctorName}") {
-
+            val doctorName :String = it.arguments?.getString("doctorName") ?: ""
+            AppointmentScreen(doctorName = doctorName, navController = navController, context = context)
         }
 
         composable(Screen.ChatRoomsScreen.route) {
-
+            ChatRoomListScreen(navController = navController) {
+                navController.navigate("${Screen.ChatScreen.route}/${it.id}")
+            }
         }
 
         composable(Screen.ProfileScreen.route) {
@@ -111,7 +117,9 @@ fun NavigationGraph(
         }
 
         composable("${Screen.ChatScreen.route}/{roomId}") {
-
+            val roomId: String = it
+                .arguments?.getString("roomId") ?: ""
+            ChatScreen(roomId = roomId,navController = navController,)
         }
     }
 }

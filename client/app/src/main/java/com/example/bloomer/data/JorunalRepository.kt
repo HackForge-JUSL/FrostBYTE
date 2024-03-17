@@ -1,6 +1,5 @@
 package com.example.bloomer.data
 
-
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -24,7 +23,6 @@ class JournalRepository(private val firestore: FirebaseFirestore) : ViewModel() 
     } catch (e: Exception) {
         Result.Error(e)
     }
-
 
     suspend fun updateJournal(journalId: String, updatedJournal: Journal, userId: String): Result<Unit> = try {
         firestore.collection("users").document(userId)
