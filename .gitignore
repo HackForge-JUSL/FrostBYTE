@@ -16,3 +16,4 @@ client/local.properties
 client/app/google-services.json
 server/node_modules
 server/secret.json
+server/bert_classifier (1).pth
