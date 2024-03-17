@@ -58,8 +58,8 @@ fun NavigationGraph(
 
         }
 
-        composable(Screen.JournalScreen.route) {
-
+        composable(Screen.JournalScreen.route){
+            JournalScreen(navController = navController,authViewModel = authViewModel,)
         }
 
         composable(Screen.ChatBotScreen.route) {
