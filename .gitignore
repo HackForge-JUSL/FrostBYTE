@@ -14,3 +14,5 @@ client/.externalNativeBuild
 client/.cxx
 client/local.properties
 client/app/google-services.json
+server/node_modules
+server/secret.json
