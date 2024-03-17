@@ -64,6 +64,20 @@ class UserRepository(private val auth: FirebaseAuth,
         Result.Error(e)
     }
 
+    suspend fun updateUserLikesWithEmail(email: String, newLikesCount: Int): Result<Unit> = try {
+        val userDocument = firestore.collection("users").document(email).get().await()
+        val user = userDocument.toObject(User::class.java)
+        if (user != null) {
+            val updatedUser = user.copy(likes = newLikesCount)
+            firestore.collection("users").document(email).set(updatedUser).await()
+            Result.Success(Unit)
+        } else {
+            Result.Error(Exception("User data not found for email: $email"))
+        }
+    } catch (e: Exception) {
+        Result.Error(e)
+    }
+
     suspend fun logout(): Result<Boolean> {
         return try {
             auth.signOut()
