@@ -96,11 +96,14 @@ fun NavigationGraph(
         }
 
         composable(Screen.DoctorScreen.route) {
-
+            DoctorScreen(navController = navController){
+                navController.navigate("${Screen.AppointmentScreen.route}/${it.name}")
+            }
         }
 
         composable("${Screen.AppointmentScreen.route}/{doctorName}") {
-
+            val doctorName :String = it.arguments?.getString("doctorName") ?: ""
+            AppointmentScreen(doctorName = doctorName, navController = navController, context = context)
         }
 
         composable(Screen.ChatRoomsScreen.route) {
