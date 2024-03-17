@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Bloomer</string>
+    <string name="home_screen_app_bar">BLOOMER</string>
+    <string name="journal_screen_app_bar">JOURNAL</string>
+    <string name="chatroom_screen_app_bar">CHAT ROOMS</string>
+    <string name="chatbot_screen_app_bar">BLOOM BEAR</string>
+    <string name="doctor_screen_app_bar">CONTACT PROFESSIONALS</string>
+    <string name="appointment_screen_app_bar">BOOK YOUR APPOINTMENT</string>
+    <string name="profile_screen_app_bar">PROFILE</string>
 </resources>
