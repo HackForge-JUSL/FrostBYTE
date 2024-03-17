@@ -63,7 +63,7 @@ app.get("/listen-to-changes", async (req, res) => {
             });
 
               pythonProcess.on("exit", (code) => {
-                  if (predictionResult.trim() === "negative") {
+                  if ((JSON.parse(predictionResult).prediction).trim() === "negative") {
                       console.log(predictionResult);
                       // Set the 'removed' flag to true in the Firestore document
                       collectionRef
