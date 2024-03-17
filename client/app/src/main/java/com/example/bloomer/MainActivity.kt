@@ -1,9 +1,13 @@
 package com.example.bloomer
 
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -30,8 +34,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 class MainActivity : ComponentActivity() {
+
+    private val uriState = MutableStateFlow("")
+    private val imagePicker =
+        registerForActivityResult<PickVisualMediaRequest, Uri>(
+            ActivityResultContracts.PickVisualMedia()
+        ) { uri ->
+            uri?.let {
+                uriState.update { uri.toString() }
+            }
+        }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +62,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationGraph(navController = navController, authViewModel = authViewModel)
-                }
+                    NavigationGraph(navController = navController, authViewModel = authViewModel, imagePicker,uriState,)                }
             }
         }
     }
@@ -56,7 +72,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    imagePicker: ActivityResultLauncher<PickVisualMediaRequest>,
+    uriState: MutableStateFlow<String>
 ) {
     var startDestination = Screen.JournalScreen.route
     val context = LocalContext.current
@@ -84,7 +102,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.ChatBotScreen.route) {
-
+            ChatBotScreen(imagePicker = imagePicker, uriState = uriState,navController = navController,)
         }
 
         composable(Screen.LoginScreen.route) {
@@ -113,7 +131,7 @@ fun NavigationGraph(
         }
 
         composable(Screen.ProfileScreen.route) {
-
+            ProfileScreen(authViewModel = authViewModel, navController = navController)
         }
 
         composable("${Screen.ChatScreen.route}/{roomId}") {
