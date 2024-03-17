@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.bloomer.ViewModels.AuthViewModel
 import com.example.bloomer.screens.AppointmentScreen
 import com.example.bloomer.screens.ChatBotScreen
 import com.example.bloomer.screens.ChatRoomListScreen
@@ -23,12 +24,17 @@ import com.example.bloomer.screens.JournalScreen
 import com.example.bloomer.screens.LoginScreen
 import com.example.bloomer.screens.ProfileScreen
 import com.example.bloomer.screens.SignUpScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            val authViewModel: AuthViewModel = viewModel()
 
             BloomerTheme {
                 // A surface container using the 'background' color from the theme
@@ -36,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationGraph(navController = navController)
+                    NavigationGraph(navController = navController, authViewModel = authViewModel)
                 }
             }
         }
@@ -45,17 +51,28 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NavigationGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    authViewModel: AuthViewModel
 ) {
-    var startDestination = Screen.SignupScreen.route
+    var startDestination = Screen.JournalScreen.route
     val context = LocalContext.current
+    val user = Firebase.auth.currentUser
+    if (user != null) {
+        // User is signed in
+    } else {
+        // No user is signed in
+        startDestination = Screen.SignupScreen.route
+    }
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
         composable(Screen.SignupScreen.route) {
-
+            SignUpScreen(
+                authViewModel = authViewModel,
+                onNavigateToLogin = { navController.navigate(Screen.LoginScreen.route) }
+            )
         }
 
         composable(Screen.JournalScreen.route){
@@ -67,7 +84,11 @@ fun NavigationGraph(
         }
 
         composable(Screen.LoginScreen.route) {
-
+            LoginScreen(
+                authViewModel = authViewModel,
+                onNavigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
+                onSignInSuccess = { navController.navigate(Screen.JournalScreen.route) }
+            )
         }
 
         composable(Screen.DoctorScreen.route) {
